@@ -13,4 +13,3 @@ A department website which showcase different sections like Majors, Faculty, Res
 
 -AJAX to get asynchronous data from REST api in JSON Format.
 -Cross Browser and CORS (Cross Origin Resource Sharing) issues were handled.
-
