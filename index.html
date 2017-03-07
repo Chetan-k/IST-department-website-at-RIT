@@ -1,0 +1,1155 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>IST @ RIT</title>
+		<script src="https://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<script src="js/jquery.magnific-popup.js"></script>
+		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.nav.js"></script>
+
+
+
+		<link rel="stylesheet" href="css/jquery-ui.css">
+		<link rel="stylesheet" href="css/magnific-popup.css">
+		<link rel="stylesheet" href="css/main.css" />
+		<link href="css/hover.css" rel="stylesheet" media="all">
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-xlarge.css" />
+		</noscript>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+
+				// fetching data for ABOUT section
+				myXHR('get',{'path':'/about/'}).done(function(json){
+//
+					var x='<h2 style="font-family: geo-sans-light"><span style="color: #FF512F">INFORMATION</span> SCIENCE AND TECHNOLOGIES <span style="color: #FF512F"> @</span> RIT</h2>';
+					x+='<h4 style="color: #F09819">'+json.title+'</h4>';
+					x+='<p style="font-size: medium;padding: 30px">'+json.description+'</p>';
+					x+='<blockquote><a class="icon fa-quote-left"</a>' +json.quote+ '<a class="icon fa-quote-right"></a></blockquote>';
+					x+='<p>'+json.quoteAuthor+'</p>';
+					$('#banner').html(x);
+				});
+
+				// undergard degrees
+				myXHR('get',{'path':'/degrees/undergraduate/'}).done(function(json){
+//					console.log(json);
+					//I have an object holding arrays...
+					var x='';
+					var y='';
+					var z='';
+					$.each(json.undergraduate,function(i,item){
+						//console.log(item.title);
+						if (item.title=='Web & Mobile Computing, B.S.'){
+
+							x+="<p>"+item.description+"</p>";
+						}else if (item.title=='Human Centered Computing, B.S.'){
+
+						    y+="<p>"+item.description+"</p>";
+						}else {
+
+							z+="<p>"+item.description+"</p>";
+						}
+					});
+					$('#uweb').append(x);
+					$('#uhuman').append(y);
+					$('#ucomputing').append(z);
+
+					//Data for individual domains in undergrad degree
+					var w='';
+					w+='<h2>'+json.undergraduate[0].title+'</h2>';
+					$.each(json.undergraduate[0].concentrations, function(i,item){
+						w+='<ul><li>'+item+'</li></ul>';
+					});
+					w+='<a href="http://wmc.rit.edu">'+'Know More!'+'</a>';
+					$('#webu-popup').html(w);
+
+					var h='';
+					h+='<h2>'+json.undergraduate[1].title+'</h2>';
+					$.each(json.undergraduate[1].concentrations, function(i,item){
+					h+='<ul><li>'+item+'</li></ul>';
+					});
+					h+='<a href="http://hcc.rit.edu">'+'Know More!'+'</a>';
+					$('#humanu-popup').html(h);
+
+					var c='';
+					c+='<h2>'+json.undergraduate[2].title+'</h2>';
+					$.each(json.undergraduate[2].concentrations, function(i,item){
+						c+='<ul><li>'+item+'</li></ul>';
+					});
+					c+='<a href="http://cit.rit.edu">'+'Know More!'+'</a>';
+					$('#computingu-popup').html(c);
+				});
+
+				//Graduate degrees
+				myXHR('get',{'path':'/degrees/graduate/'}).done(function(json){
+					//console.log(json);
+					var x='';
+					var y='';
+					var z='';
+					$.each(json.graduate,function(i,item){
+						//console.log(item.title);
+						if (item.title=='Information Sciences & Technologies, M.S.'){
+
+							x+="<p>"+item.description+"</p>";
+						}else if (item.title=='Human Computer Interaction, M.S.'){
+							y+="<p>"+item.description+"</p>";
+						}else if (item.title=='Networking & Systems Administration, M.S.'){
+
+							z+="<p>"+item.description+"</p>";
+
+						}else{
+							z+="<h4 class='fa fa-html5 fa-2x' style='color: #7454CC'>"+item.degreeName+"</h4>";
+							z+="<p>"+item.availableCertificates+"</p>";
+						}
+
+					});
+					$('#ginfo').append(x);
+					$('#ghuman').append(y);
+					$('#gnetwork').append(z);
+
+					var n='';
+					n+='<h2>'+json.graduate[0].title+'</h2>';
+					$.each(json.graduate[0].concentrations, function(i,item){
+						//console.log(item);
+						n+='<ul><li>'+item+'</li></ul>';
+					});
+					n+='<a href="http://it.rit.edu">'+'Know More!'+'</a>';
+					$('#infog-popup').html(n);
+
+					var u='';
+					u+='<h2>'+json.graduate[1].title+'</h2>';
+					$.each(json.graduate[1].concentrations, function(i,item){
+						//console.log(item);
+						u+='<ul><li>'+item+'</li></ul>';
+					});
+					u+='<a href="http://hci.rit.edu">'+'Know More!'+'</a>';
+					$('#humang-popup').html(u);
+
+					var w='';
+					w+='<h2>'+json.graduate[2].title+'</h2>';
+					$.each(json.graduate[2].concentrations, function(i,item){
+						//console.log(item);
+						w+='<ul><li>'+item+'</li></ul>';
+					});
+					w+='<a href="http://nsa.rit.edu">'+'Know More!'+'</a>';
+					$('#networkg-popup').html(w);
+
+				});
+
+				//Faculty and their research
+				myXHR('get',{'path':'/people/faculty/'}).done(function(json){
+					var x='';
+					$.each(json.faculty,function(){
+						if($(this)[0].email.length==0 || $(this)[0].phone.length==0){
+							var em='xxxxxxgmail.com';
+							var ph='xxx-xxx-xxxx';
+							x += '<div style="margin: 5px" class="image rounded hvr-bob " onclick="facMore(this)" data-id="' + $(this)[0].username + '" style="cursor:pointer;"><img style="height: 150px;width: 150px" href="#faculty-popup" class="faculty-popup-link" src="' + $(this)[0].imagePath + '"/>';
+							x += '<div class="content" style="line-height: 0em"><header><h4  href="#faculty-popup" class="faculty-popup-link">' + $(this)[0].name + '</h4><p>' + $(this)[0].title + '</p></header>';
+							x += '<p  href="#faculty-popup" class="faculty-popup-link">' + em + '</p><p>' + ph + '</p></div></div>';
+						}else {
+							x += '<div style="margin: 5px" class="image rounded hvr-bob" onclick="facMore(this)" data-id="' + $(this)[0].username + '" style="cursor:pointer;"><img style="height: 150px;width: 150px" href="#faculty-popup" class="faculty-popup-link" src="' + $(this)[0].imagePath + '"/>';
+							x += '<div class="content" style="line-height: 0em"><header><h4 href="#faculty-popup" class="faculty-popup-link">' + $(this)[0].name + '</h4><p>' + $(this)[0].title + '</p></header>';
+							x += '<p  href="#faculty-popup" class="faculty-popup-link">' + $(this)[0].email + '</p><p>' + $(this)[0].phone + '</p></div></div>';
+						}
+
+					});
+					$('.fd1').html(x);
+				});
+
+				//staff
+				myXHR('get',{'path':'/people/staff/'}).done(function(json){
+					var x='';
+					$.each(json.staff,function(){
+						if($(this)[0].email.length==0 || $(this)[0].phone.length==0){
+							var em='xxxxxxgmail.com';
+							var ph='xxx-xxx-xxxx';
+							x += '<div style="margin: 5px" class="image rounded"><img style="height: 150px;width: 150px" src="' + $(this)[0].imagePath + '"/>';
+							x += '<div class="content" style="line-height: 0px"><header><h4>' + $(this)[0].name + '</h4><p>' + $(this)[0].title + '</p></header>';
+							x += '<p>' + em + '</p><p>' + ph + '</p></div></div>';
+						}else {
+							x += '<div style="margin: 5px" class="image rounded"><img style="height: 150px;width: 150px" src="' + $(this)[0].imagePath + '"/>';
+							x += '<div class="content" style="line-height: 0px"><header><h4>' + $(this)[0].name + '</h4><p>' + $(this)[0].title + '</p></header>';
+							x += '<p>' + $(this)[0].email + '</p><p>' + $(this)[0].phone + '</p></div></div>';
+						}
+					});
+					$('.fd2').html(x);
+				});
+
+				//Ug minors
+				myXHR('get',{'path':'/minors/UgMinors/'}).done(function(json){
+					//database
+					var x='';
+					x+='<h2>'+'Minor: '+json.UgMinors[0].title+'</h2>';
+					x+='<p>'+json.UgMinors[0].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					x+='<div class="accordion"><h2>'+json.UgMinors[0].courses[0]+'</h2><div><h3>'+'ISTE-230 : Intro to Database & Data Modeling'+'</h3><p>'+'A presentation of the fundamental concepts and theories used in organizing and structuring data. Coverage includes the data modeling process, basic relational model, normalization theory, relational algebra, and mapping a data model into a database schema. Structured Query Language is used to illustrate the translation of a data model to physical data organization.' +
+							' Modeling and programming assignments will be required.(Prerequisite: ISTE-120 or Equivalent)'+'</p></div><h2>'+json.UgMinors[0].courses[1]+'</h2><div><h3>'+'ISTE-430 : Information Requirements Modeling'+'</h3>' +
+							'<p>'+'Students will survey and apply contemporary techniques used in analyzing and modeling information requirements. Requirements will be elicited in a variety of domains and abstracted at conceptual, logical, and physical levels of detail. Process, data, and state modeling will be applied in projects that follow a systems development lifecycle. Objectoriented modeling will be explored and contrasted with data and process oriented modeling. Individual and team modeling assignments will be required.'+
+							'(Prerequisite: ITSE-230)'+'</p></div><h2>'+json.UgMinors[0].courses[2]+'</h2><div><h3>'+'ISTE-330 : Database Connectivity and Access'+'</h3><p>'+'In this course, students will build applications that interact with databases. Through programming exercises, students will work with multiple databases and programmatically invoke the advanced database processing operations that are integral to contemporary computing applications. Topics include the database drivers, the data layer, connectivity operations, security and integrity, and controlling database access.'+
+							'(Prerequisite: ISTE-230)'+'</p></div><h2>'+json.UgMinors[0].courses[3]+'</h2><div><h3>'+'ISTE-436 : Data Management and Access'+'</h3><p>'+'Students will be introduced to issues in client/server database implementation and administration. Students will configure, test, and establish client-server communication and server-server communication with single and multiple database servers. Topics such as schema implementation, storage allocation and management, user creation and access security, backup and recovery, and performance measurement and enhancement will be presented in lecture and experienced in a laboratory environment. Students will configure and demonstrate successful communication between a database file server and multiple clients.'+
+							'(Prerequisite: ISTE-330)'+'</p></div><h2>'+json.UgMinors[0].courses[4]+'</h2><div><h3>'+'ISTE-432 : Database Application Development'+'</h3><p>'+'Database applications have aspects that need to be considered when designing and developing larger-scale systems. In this course students will explore topics such as concurrent processing, scalability, performance, and security within the context of developing larger-scale data/base information processing systems. Programming projects are required .'+
+							'(Prerequisite: ISTE-330)'+'</p></div><h2>'+json.UgMinors[0].courses[5]+'</h2><div><h3>'+'ISTE-434 : Data Warehousing'+'</h3><p>'+'This course covers the purpose, scope, capabilities, and processes used in data warehousing technologies for the management and analysis of data. Students will be introduced to the theory of data warehousing, dimensional data modeling, the extract/transform/load process, warehouse implementation, and summary-data management. The basics of data mining and importance of data security will also be discussed. Hands-on exercises include implementing a small-scale data warehouse.'+
+							'(Prerequisite: ISTE-230 & 3rd year standing)'+'</p></div></div>';
+					x+='<p style="color: red">'+json.UgMinors[0].note+'</p>';
+//
+					$('#data-popup').html(x);
+
+					//geographic
+					var g='';
+					g+='<h2>'+'Minor: '+json.UgMinors[1].title+'</h2>';
+					g+='<p>'+json.UgMinors[1].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					g+='<div class="accordion"><h2>'+json.UgMinors[1].courses[0]+'</h2><div><h3>'+'ISTE-382 : Introduction to Geospatial Technologies'+'</h3><p>'+'This course provides a survey of underlying concepts and technologies used to represent and understand the earth, collectively referred to as Geospatial Technologies (GTs). Students will gain hands-on experience with GTs, including Global Positioning Systems (GPSs), Geographic Information Systems (GISs), remote sensing, Virtual Globes, and Web mapping mashups. Students also will develop basic spatial thinking, reasoning, problem solving and literacy skills.'+'</p></div>'+
+							'<h2>'+json.UgMinors[1].courses[1]+'</h2><div><h3>'+'ISTE-384 : Intro. to Geo. Information Systems'+'</h3><p>'+'This course introduces students to Geographic Information Systems (GIS). Course lectures, reading assignments, and practical lab experiences will cover a mix of conceptual, practical and technical GIS topics. Topics include GIS data models, basic cartography, geodatabases, spatial data acquisition and creation, spatial analysis, and GIS software operation'+'</p></div>'+
+							'<h2><spam style="color:red">'+'Development Track'+'</span></h2><div><h3>'+'ISTE-386, ISTE-482, ISTE-484'+'</h3></div><h2>'+json.UgMinors[1].courses[2]+'</h2><div><h3>'+'ISTE-386 : GIS Programming'+'</h3><p>'+'Any serious interest in Geographic Information System (GIS) beyond the "out-of-the-box capabilities of standard commercial GIS software such as ESRIs ArcGIS platform requires knowledge of how to program a GIS. Knowledge of how to program a GIS extends the capabilities and possibilities of GIS in numerous scientific, technical, and applied dimensions not possible with "out-of-the-box" GIS capabilities. This course is targeted to students with a serious interest in GIS who wish to apply previously learned object oriented programming concepts within the context of Geographic Information System (GIS) application development across a variety of environments'+'</p></div>'+
+							'<h2>'+json.UgMinors[1].courses[3]+'</h2><div><h3>'+'ISTE-482 : Geospatial Data Analysis'+'</h3><p>'+'This course is an introduction to the theory and techniques used for spatial analysis of complex, geographically referenced data. Topics include spatial data analysis and statistical techniques for a variety of problem types that span a broad spectrum of disciplines. In-class and out-of-class assignments will develop students'+' spatial data analysis skills.'+'</p></div>'+
+							'<h2>'+json.UgMinors[1].courses[4]+'</h2><div><h3>'+'ISTE-484 : Thematic Cartography & Geovisualization'+'</h3><p>'+'This course examines concepts and techniques associated with dynamic map construction, usage, and assessment. Specific topics include thematic cartography, geographic information visualization, sources of dynamic geographic information, developing animated and interactive maps, mapping mashup development, using maps as a means to support group work, usability of dynamic maps, and current geovisualization research areas. Development of a visualization prototype and an associated research project in an area related to thematic cartography and geographic visualization are required.'+'</p></div>'+
+							'<h2><spam style="color:red">'+'Analysis Track'+'</span></h2><div><h3>'+'ISTE-482, ISTE-230, ISTE-483'+'</h3></div><h2>'+json.UgMinors[1].courses[5]+'</h2><div><h3>'+'ISTE-482 : Geospatial Data Analysis'+'</h3><p>'+'This course is an introduction to the theory and techniques used for spatial analysis of complex, geographically referenced data. Topics include spatial data analysis and statistical techniques for a variety of problem types that span a broad spectrum of disciplines. In-class and out-of-class assignments will develop students'+' spatial data analysis skills.'+'</p></div>'+
+							'<h2>'+json.UgMinors[1].courses[6]+'</h2><div><h3>'+'ISTE-230 : Intro to Database & Data Modeling'+'</h3><p>'+'A presentation of the fundamental concepts and theories used in organizing and structuring data. Coverage includes the data modeling process, basic relational model, normalization theory, relational algebra, and mapping a data model into a database schema. Structured Query Language is used to illustrate the translation of a data model to physical data organization. Modeling and programming assignments will be required.'+
+							'(Prerequisite: ISTE-120 or Equivalent)'+'</p></div>'+
+							'<h2>'+json.UgMinors[1].courses[7]+'</h2><div><h3>'+'ISTE-483 : Info. Science & Tech. Research'+'</h3><p>'+'This course is for students enrolled in the BS IT degree program and minors to demonstrate competence in concepts, techniques and applications via a semester-length research project developed in conjunction with a faculty member and based on the students degree concentration or minor. With instructor guidance, students will learn how to formulate a research question, choose relevant methods to answer the question, execute the project and present results in a public forum.'+
+							'</p></div></div>';
+					g+='<p style="color: red">'+json.UgMinors[1].note+'</p>';
+	//
+					$('#mgeo-popup').html(g);
+
+					//health
+					var h='';
+					h+='<h2>'+'Minor: '+json.UgMinors[2].title+'</h2>';
+					h+='<p>'+json.UgMinors[2].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					h+='<div class="accordion"><h2>'+json.UgMinors[2].courses[0]+'</h2><div><h3>'+'ISTE-330 : Database Connectivity and Access'+'</h3><p>'+'In this course, students will build applications that interact with databases. Through programming exercises, students will work with multiple databases and programmatically invoke the advanced database processing operations that are integral to contemporary computing applications. Topics include the database drivers, the data layer, connectivity operations, security and integrity, and controlling database access.(Prerequisite: ISTE-230)'+'</p></div>'+
+							'<h2>'+json.UgMinors[2].courses[1]+'</h2><div><h3>'+'MEDI-130 : Computers in Medicine'+'</h3><p>'+'This is an introduction to computer technology and its use in the medical field. About half of the course is devoted to the study of computers, their basic components and peripheral devices, the storage and retrieval of data, electronic communications and the Internet. The other half of the course deals with medical data and major applications of computers in medicine, including Hospital Information Systems (HIS), medical imaging, surgery, telemedicine, and pharmacy. Through demonstration and computer laboratory assignments, students are exposed to personal productivity software such as word processors, spreadsheet and database systems, presentation software and medical applications.Class 3, Credit 3 (F, S)'+'</p></div>'+
+							'<h2>'+json.UgMinors[2].courses[2]+'</h2><div><h3>'+'MEDI-320 : Medical Database Architectures'+'</h3><p>'+'This is an in-depth study of database architectures used in the medical field. Students will learn about the different types of database architecture in support of medical education, clinical research and clinical applications. Database design and programming assignments will be required. (Prerequisites: MEDI-310, ISTE-230) Class 3, Credit 3 (S)'+'</p></div>'+
+							'<h2>'+json.UgMinors[2].courses[3]+'</h2><div><h3>'+'MEDI-330 : The Electronic Health Record'+'</h3><p>'+'This course provides an introduction and hands-on practice in both the use and development of electronic health records. Students address issues related to the acquisition, storage, and use of information in computer-based health records including the various types of information used in clinical care: text, structured data, images, audio, video, etc. Other topics covered include: clinical vocabularies (existing schemes and their limitations); how clinical information is generated and utilized; methods of information storage and retrieval; and the legal, social and regulatory problems associated with electronic health records such as security and confidentiality. Programming assignments will be required. (Prerequisite: MEDI-320)'+'</p></div>'+
+							'<h2>'+json.UgMinors[2].courses[4]+'</h2><div><h3>'+'MEDI-430 : Medical Application Integration'+'</h3><p>'+'This course will provide students with an understanding of application integration in healthcare. Java programming assignments will be required. Students will also learn medical business processes and how they impact data integration within a hospital. Middleware message brokers will be examined along with the use of the HL7 messaging standard. Web services and other forms of data integration will be studied. (Prerequisites: MEDI-330, ISTE-121) Class 3, Credit 3 (S)'+'</p></div></div>';
+
+					h+='<p style="color: red">'+json.UgMinors[2].note+'</p>';
+//
+					$('#mhealth-popup').html(h);
+
+					//mobile design and development
+					var m='';
+					m+='<h2>'+'Minor: '+json.UgMinors[3].title+'</h2>';
+					m+='<p>'+json.UgMinors[3].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					m+='<div class="accordion"><h2>'+json.UgMinors[3].courses[0]+'</h2><div><h3>'+'ISTE-120 : Comp. Problem Solving I'+'</h3><p>'+'A first course in using the object-oriented approach to solve problems in the information domain. Students will learn to model hierarchical information structures using XML, to design software solutions using the object-oriented approach, to visually model systems using UML, to implement software solutions using a contemporary programming language, and to test these software solutions. Additional topics include thinking in object-oriented terms, and problem definition. Programming projects will be require (No Prerequisites)'+'</p></div>'+
+							'<h2>'+json.UgMinors[3].courses[1]+'</h2><div><h3>'+'ISTE-140 : Web & Mobile I'+'</h3><p>'+'This course provides students with an introduction to Internet and Web technologies, and to development on Macintosh/UNIX computer platforms. Topics include Internet transport protocols and security methods, XHTML and CSS, multimedia, Web page design and Web site publishing. Emphasis is placed on fundamentals, concepts and standards. Additional topics include the user experience, mobile design issues, and copyright/intellectual property considerations. Exercises and projects are required (No Prerequisites)'+'</p></div>'+
+							'<h2>'+json.UgMinors[3].courses[2]+'</h2><div><h3>'+'ISTE-260 : Designing the User Experience'+'</h3><p>'+'The user experience is an important design element in the development of interactive systems. This course presents the foundations of user-centered design principles within the context of human-computer interaction (HCI). Students will explore and practice HCI methods that span the development lifecycle from requirements analysis and creating the product/service vision through system prototyping and usability testing. Leading edge interface technologies are examined. Group-based exercises and design projects are required (Prerequisite: ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[3].courses[3]+'</h2><div><h3>'+'ISTE-240 : Web & Mobile II'+'</h3><p>'+'This course builds on the basics of web page development that are presented in Web I and extends that knowledge to focus on theories, issues, and technologies related to the design and development of web sites. An overview of web design concepts, including usability, accessibility, information architecture, and graphic design in the context of the web will be covered. Introduction to web site technologies, including HTTP, web client and server programming, and dynamic page generation from a database also will be explored. Development exercises are required (Prerequisites: ISTE-120 & ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[3].courses[4]+'</h2><div><h3>'+'ISTE-252 : Foundations of Mobile Design'+'</h3><p>'+'This course is an introduction to designing, prototyping, and creating applications and Web Apps for mobile devices. These devices include a unique set of hardware and communications capabilities, incorporate novel interfaces, are location aware, and provide persistent connectivity. Topics covered include user interaction patterns, connectivity, interface design, software design patterns, and application architectures. Programming projects are required. (Prerequisite: ISTE-240)'+'</p></div></div>';
+
+					m+='<p style="color: red">'+'Click to get more info!'+'</p>';
+
+					$('#mmobile-popup').html(m);
+
+					//mobile development
+					var d='';
+					d+='<h2>'+'Minor: '+json.UgMinors[4].title+'</h2>';
+					d+='<p>'+json.UgMinors[4].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					d+='<div class="accordion"><h2>'+json.UgMinors[4].courses[0]+'</h2><div><h3>'+'ISTE-140 : Web & Mobile I'+'</h3><p>'+'This course provides students with an introduction to Internet and Web technologies, and to development on Macintosh/UNIX computer platforms. Topics include Internet transport protocols and security methods, XHTML and CSS, multimedia, Web page design and Web site publishing. Emphasis is placed on fundamentals, concepts and standards. Additional topics include the user experience, mobile design issues, and copyright/intellectual property considerations. Exercises and projects are required (No Prerequisites)'+'</p></div>'+
+							'<h2>'+json.UgMinors[4].courses[1]+'</h2><div><h3>'+'ISTE-240 : Web & Mobile II'+'</h3><p>'+'This course builds on the basics of web page development that are presented in Web I and extends that knowledge to focus on theories, issues, and technologies related to the design and development of web sites. An overview of web design concepts, including usability, accessibility, information architecture, and graphic design in the context of the web will be covered. Introduction to web site technologies, including HTTP, web client and server programming, and dynamic page generation from a database also will be explored. Development exercises are required (Prerequisites: ISTE-120 & ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[4].courses[2]+'</h2><div><h3>'+'ISTE-340 : Client Programming'+'</h3><p>'+'This course will explore the analysis, design, development, and implementation of client-side programming in the context of Internet technologies, mobile devices, Web-based client systems and desktop applications. Students will learn to design and build usable and effective interactive systems, clients, and interfaces. Key features addressed will include browser and platform compatibility, object reusability, bandwidth and communications issues, development environments, privacy and security, and related technologies and APIs. Programming is required (Prerequisite: ISTE-240)'+'</p></div>'+
+							'<h2>'+json.UgMinors[4].courses[3]+'</h2><div><h3>'+'ISTE-252 : Foundations of Mobile Design'+'</h3><p>'+'This course is an introduction to designing, prototyping, and creating applications and Web Apps for mobile devices. These devices include a unique set of hardware and communications capabilities, incorporate novel interfaces, are location aware, and provide persistent connectivity. Topics covered include user interaction patterns, connectivity, interface design, software design patterns, and application architectures. Programming projects are required. (Prerequisite: ISTE-240)'+'</p></div>'+
+							'<h2>'+json.UgMinors[4].courses[4]+'</h2><div><h3>'+'ISTE-454 : Mobile Application Dev I'+'</h3><p>'+'This course extends the material covered in the Foundations of Mobile Design course and provides students with a team-based experience of creating interesting applications and web apps for small-size form factor mobile devices such as smartphones These devices are exceptionally portable, have unique sets of hardware and communications capabilities, incorporate novel interfaces, are location aware, and provide persistent connectivity. Students are encouraged to make creative use of these unique device characteristics and operating properties to develop innovative applications. Programming projects are required.'+'</p></div>'+
+					        '<h2>'+json.UgMinors[4].courses[5]+'</h2><div><h3>'+'ISTE-456 : Mobile Application Development II'+'</h3><p>'+'This course extends the Mobile Application Development I experience to medium-size form factor mobile devices such as slates and tablets. Compared to smartphones, these devices have much larger screen areas, and have the potentials for more processing power, higher capacity memories, additional sensors, and higher capacity batteries. Students are encouraged to make creative use of these increased display and computing resources to develop innovative applications. Programming projects are required. (Prerequisite: ISTE-252; ISTE-340 or instructor permission)'+'</p></div></div>';
+					d+='<p style="color: red">'+json.UgMinors[4].note+'</p>';
+
+					$('#mdevelopment-popup').html(d);
+
+					//network
+					var n='';
+					n+='<h2>'+'Minor: '+json.UgMinors[5].title+'</h2>';
+					n+='<p>'+json.UgMinors[5].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					n+='<div class="accordion"><h2>'+json.UgMinors[5].courses[0]+'</h2><div><h3>'+'NSSA-102 : Computer Systems Concepts'+'</h3><p>'+'This course teaches the student the essential technologies needed by NSSA majors, focused on PC and mainframe hardware topics. They include: how those platforms operate, how they are configured, and the operation of their major internal components. Also covered are the basic operating system interactions with those platforms, physical security of assets, and computing-centric mathematical concepts (No Prerequisites).'+'</p></div>'+
+							'<h2>'+json.UgMinors[5].courses[1]+'</h2><div><h3>'+'NSSA-241 : Intro to Routing and Switching'+'</h3><p>'+'This course is an introduction to wired network infrastructures, topologies, technologies and protocols required for effective end-to-end communication. Basic security concepts are also introduced at the local area network communication level. Networking layers 1, 2 and 3 are examined in-depth using the International Standards Organization?s Open Systems Interconnection and TCP/IP models. Topics focus on the TCP/IP protocol suite, the Ethernet LAN protocol, and routed and routing protocols common in local area networks (Prerequisite: NSSA-102)'+'</p></div>'+
+							'<h2><spam style="color:red">'+'Networking Focus'+'</span></h2><div><h3>'+'NSSA-242, NSSA-341, NSSA-445'+'</h3></div><h2>'+json.UgMinors[5].courses[2]+'</h2><div><h3>'+'NSSA-242 : Wireless Networking'+'</h3><p>'+'This course is designed to provide the student with an understanding of the protocols, principles and concepts of radio and optical communication as they apply to wireless data networking for local area networks and peripherals. As its basis it uses the fundamental concepts and technologies learned in Networking I, and expands upon them to include other contemporary and emerging technologies. Topics including WLANs, wireless network operation, network integration, construction and network design will be discussed. Modulation techniques, measurement standards, nomenclature, equipment and theory behind transmissions in this portion of the electromagnetic spectrum will be examined (Prerequisite: NSSA-241)'+'</p></div>'+
+							'<h2>'+json.UgMinors[5].courses[3]+'</h2><div><h3>'+'NSSA-341 : VoIP and Unified Comm. I'+'</h3><p>'+'Students will explore the issues associated with migrating to newer systems and implement their own IP based data networks. These networks will be designed to carry real time data, including IP telephony. (Prerequisite: NSSA-242)'+'</p></div>'+
+							'<h2>'+json.UgMinors[5].courses[4]+'</h2><div><h3>'+'NSSA-445 : Mobile Adhoc & Sensor Networks'+'</h3><p>'+'This course will help students to identify the major issues associated with ad-hoc/sensor networks. Students will explore current ad-hoc/sensor technologies by researching key areas such as algorithms, protocols, hardware, and applications. Students will learn to develop simulation models of real sensor and ad hoc networks and study their performance when applying different wireless routing solutions. At the end of this course students will gain hands-on experience through real-world simulation projects on ad-hoc/sensor hardware. Students are required to have one year of programming in an object-oriented language (Prerequisite: NSSA-242 Wireless Networking).'+'</p></div>'+
+							'<h2><spam style="color:red">'+'System Administration Focus'+'</span></h2><div><h3>'+'NSSA-220, NSSA-221, NSSA-244'+'</h3></div><h2>'+json.UgMinors[1].courses[5]+'</h2><div><h3>'+'NSSA-220 : Task Automation w/Interp Lang'+'</h3><p>'+'An introduction to the Unix operating system and scripting in the PERL and Unix shell languages. The course will cover basic user-level commands to the Unix operating system, followed by basic control structures, and data structures in PERL. Examples will include GUI programming, and interfacing to an underlying operating system. Following PERL, students will be introduced to the basics of shell programming using the Unix bash shell (Prerequisite: ISTE 121 or one year of programming in an object-oriented language.)'+'</p></div>'+
+							'<h2>'+json.UgMinors[5].courses[6]+'</h2><div><h3>'+'NSSA-221 : System Admin I'+'</h3><div><p>'+'To become a successful system administrator, a person needs to have not only the knowledge of the fundamental computer concepts and essential system administration tasks, but also the ability to apply technologies and tools effectively in an organizational environment. This course is designed to provide students with basic knowledge and skills that an effective system administrator must know. Students will learn fundamental concepts underlying operating systems, as well as the essential system administration tasks. Student will also explore technologies and platform integration tools in a heterogeneous network environment.'+'</p><p>'+'At the end of this course, students will be able to explain the general concepts and essential tasks of system administration, and will be able to effectively apply and deploy technologies and administrative tools in an organizational environment (Prerequisite: NSSA-220)'+'</p></div></div>'+
+							'<h2>'+json.UgMinors[5].courses[7]+'</h2><div><h3>'+'NSSA-244 : Virtualization'+'</h3><p>'+'This class will take the students through the evolution of virtualization. The class begins with virtual network topologies such as VLANs, trunks and virtual routing and forwarding. The class will examine the various desktop virtualization platforms (Type 1) such as VirtualBox and VMWare workstation. Midway through the class students will transition into bare metal hypervisors (Type 2) and server virtualization. Elements of software defined networking and cloud computing will also be discussed (Prerequisites: NSSA-221, NSSA-241)'+
+							'</p></div></div>';
+					n+='<p style="color: red">'+json.UgMinors[5].note+'</p>';
+					//
+					$('#mnetwork-popup').html(n);
+
+					//web design
+					var w='';
+					w+='<h2>'+'Minor: '+json.UgMinors[6].title+'</h2>';
+					w+='<p>'+json.UgMinors[6].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					w+='<div class="accordion"><h2>'+json.UgMinors[6].courses[0]+'</h2><div><h3>'+'ISTE-105 : Web Foundations'+'</h3><p>'+'A hands-on introduction to Internet and web foundations for non-computing majors. Includes HTML (Hypertext Markup Language) and CSS (Cascading Stylesheets), web page design fundamentals, basic digital image manipulation, and web site implementation and maintenance. Students will design and build their own web site'+'</p></div>'+
+							'<h2>'+json.UgMinors[6].courses[1]+'</h2><div><h3>'+'ISTE-205 : Digital Image Creation'+'</h3><p>'+'This course explores the creation and manipulation of digital images intended for use on the Web. Topics include basics of digital photography, acquisition of images, intermediate image manipulation, image compression, and intellectual property issues. Students will be provided with digital cameras for use in the course. (Prerequisite: ISTE-105 or ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[6].courses[2]+'</h2><div><h3>'+'ISTE-206 : Digital Video Creation'+'</h3><p>'+'This course explores the creation of digital video intended for use on the Web. Topics include basics of digital videography, acquisition of audio, editing, streaming, compression, as well as storytelling with video and integration into web sites and applications. Students will be provided with digital cameras for use in the course. (Prerequisite: GCCIS-ISTE-105 or GCCIS-ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[6].courses[3]+'</h2><div><h3>'+'ISTE-305 : Rapid Online Presence'+'</h3><p>'+'Although large-scale web sites still require considerable development effort, there are today several options for establishing a web presence using tools designed for non-programmers. This course gives students understanding of and experience with installing and customizing web sites using tools such as Blogs, Wikis, Content Management Systems, and Web Site Toolkits. (Prerequisite: ISTE-105)'+'</p></div>'+
+							'<h2>'+json.UgMinors[6].courses[4]+'</h2><div><h3>'+'ISTE-405 : Web Integration & Application'+'</h3><p>'+'The final course in the minor in Web Design and Development (for non-GCCIS majors). Students will develop a deeper understanding of technologies underlying the web and how to combine them. This course builds upon the work from the preceding four courses in the minor and emphasizes integrating multiple technologies and content sources to create sophisticated web sites and web applications for desktop and mobile devices. This course is not available to GCCIS majors. (Prerequisites: GCCIS-ISTE-105, GCCIS-ISTE-205, GCCIS-ISTE-305, GCCIS-IGME-431)'+'</p></div></div>';
+
+					w+='<p style="color: red">'+json.UgMinors[6].note+'</p>';
+
+					$('#mwebdesign-popup').html(w);
+
+					var wd='';
+					wd+='<h2>'+'Minor: '+json.UgMinors[7].title+'</h2>';
+					wd+='<p>'+json.UgMinors[7].description+'</p><div style="background-color: #D64541"><h3 style="color: white;padding-left: 450px">'+'Courses in this Domain'+'</h3></div>';
+					wd+='<div class="accordion"><h2>'+json.UgMinors[7].courses[0]+'</h2><div><h3>'+'ISTE-140 : Web & Mobile I'+'</h3><p>'+'This course provides students with an introduction to Internet and Web technologies, and to development on Macintosh/UNIX computer platforms. Topics include Internet transport protocols and security methods, XHTML and CSS, multimedia, Web page design and Web site publishing. Emphasis is placed on fundamentals, concepts and standards. Additional topics include the user experience, mobile design issues, and copyright/intellectual property considerations. Exercises and projects are required (No Prerequisites)'+'</p></div>'+
+							'<h2>'+json.UgMinors[7].courses[1]+'</h2><div><h3>'+'ISTE-230 : Intro to Database & Data Modeling'+'</h3><p>'+'A presentation of the fundamental concepts and theories used in organizing and structuring data. Coverage includes the data modeling process, basic relational model, normalization theory, relational algebra, and mapping a data model into a database schema. Structured Query Language is used to illustrate the translation of a data model to physical data organization. Modeling and programming assignments will be required (Prerequisite: ISTE-120 or Equivalent)'+'</p></div>'+
+							'<h2>'+json.UgMinors[7].courses[2]+'</h2><div><h3>'+'ISTE-240 : Web & Mobile II'+'</h3><p>'+'This course builds on the basics of web page development that are presented in Web I and extends that knowledge to focus on theories, issues, and technologies related to the design and development of web sites. An overview of web design concepts, including usability, accessibility, information architecture, and graphic design in the context of the web will be covered. Introduction to web site technologies, including HTTP, web client and server programming, and dynamic page generation from a database also will be explored. Development exercises are required (Prerequisites: ISTE-120 & ISTE-140)'+'</p></div>'+
+							'<h2>'+json.UgMinors[7].courses[3]+'</h2><div><h3>'+'ISTE-340 : Client Programming'+'</h3><p>'+'This course will explore the analysis, design, development, and implementation of client-side programming in the context of Internet technologies, mobile devices, Web-based client systems and desktop applications. Students will learn to design and build usable and effective interactive systems, clients, and interfaces. Key features addressed will include browser and platform compatibility, object reusability, bandwidth and communications issues, development environments, privacy and security, and related technologies and APIs. Programming is required (Prerequisite: ISTE-240)'+'</p></div>'+
+							'<h2>'+json.UgMinors[7].courses[4]+'</h2><div><h3>'+'SWEN-383 : Software Design Principles & Patterns'+'</h3><p>'+'Quality software designs and architectures reflect software engineering principles that represent best contemporary practice. This course focuses on explicating these fundamental principles, examining a set of design and architecture patterns that embody the principles, and applying patterns appropriate to a design problem in a given context. Not open to those taking SWEN-262 (Co-Requisite: ISTE-340)'+'</p></div>'+
+							'<h2>'+json.UgMinors[7].courses[5]+'</h2><div><h3>'+'ISTE-341 : Server Programming'+'</h3><p>'+'This course provides in-depth work in server-side programming. Students will develop dynamic, data centric web pages and systems, and server-side information services that will be available to clients implemented in a variety of software technologies. Topics include XML parsing, generation, and consumption; web configuration and security; design patterns; web service structures, and application security. Programming projects are required (Prerequisites: ISTE-340, SWEN-383)'+'</p></div></div>';
+
+					wd+='<p style="color: red">'+json.UgMinors[7].note+'</p>';
+
+					$('#mwebdev-popup').html(wd);
+
+					$('.accordion').accordion({
+						heightStyle: "content"
+					});
+
+				});
+
+//				Student Resources
+//				Study Abroad
+				myXHR('get',{'path':'/resources/'}).done(function(json){
+					var x='';
+					x+='<h2 style="color: #F36E21">'+json.studyAbroad.title+'</h2>';
+					x+='<p>'+json.studyAbroad.description+'</p>';
+					$.each(json.studyAbroad.places,function(i,item){
+						x+="<h3>"+item.nameOfPlace+"</h3>";
+						x+="<p>"+item.description+"</p>";
+					});
+					$('#abroad-popup').html(x);
+
+					var y='';
+					y+='<h2 style="color: #F36E21">'+json.studentServices.title+'</h2>';
+					y+='<h3>'+json.studentServices.academicAdvisors.title+'</h3>';
+					y+='<p>'+json.studentServices.academicAdvisors.description+'</p>';
+					y+='<p>'+'For more information about advising, please consult our: '+'<a href="http://ist.rit.edu/assets/includes/resources/calls.php?area=advising">Advising FAQ</a> '+'</p>';
+					y+='<h3>'+json.studentServices.professonalAdvisors.title+'</h3>';
+					$.each(json.studentServices.professonalAdvisors.advisorInformation, function (i,item){
+						y+='<ul><li>'+item.name+','+item.department+' ('+item.email+')'+'</li></ul>';
+					});
+					y+='<h3>'+json.studentServices.facultyAdvisors.title+'</h3><p>'+json.studentServices.facultyAdvisors.description+'</p>';
+					y+='<h3>'+json.studentServices.istMinorAdvising.title+'</h3>';
+					$.each(json.studentServices.istMinorAdvising.minorAdvisorInformation, function (i,item){
+						y+='<ul><li>'+item.title+': '+item.advisor+' '+item.email+'</li></ul>';
+					});
+					$('#services-popup').html(y);
+
+					var z='';
+					z+='<h2 style="color: #F36E21">'+json.tutorsAndLabInformation.title+'</h2>';
+					z+='<p>'+json.tutorsAndLabInformation.description+'</p>';
+					z+='<a href="http://www.istlabs.rit.edu">'+'Lab Hours and TA Schedule'+'</a>';
+					$('#tutor-popup').html(z);
+
+					var s='';
+					s+='<h2 style="color: #F36E21">'+json.studentAmbassadors.title+'</h2><h3>'+json.studentAmbassadors.subSectionContent[0].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[0].description+'</p>';
+					s+='<img style="position: relative;left: 200px" src="http://ist.rit.edu/assets/img/resources/Ambassadors.jpg"/>';
+					s+='<h3>'+json.studentAmbassadors.subSectionContent[1].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[1].description+'</p>';
+					s+='<h3>'+json.studentAmbassadors.subSectionContent[2].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[2].description+'</p>';
+					s+='<h3>'+json.studentAmbassadors.subSectionContent[3].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[3].description+'</p>';
+					s+='<h3>'+json.studentAmbassadors.subSectionContent[4].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[4].description+'</p>';
+					s+='<h3>'+json.studentAmbassadors.subSectionContent[5].title+'</h3><p>'+json.studentAmbassadors.subSectionContent[5].description+'</p>';
+					s+='<p>'+'Interested students are encouraged to'+'<a href="http://goo.gl/forms/PIL1T1JGdm">'+' Apply '+'</a>'+'via our Google Forms.'+'</p>';
+					s+='<p>'+json.studentAmbassadors.note+'</p>';
+					$('#ambassador-popup').html(s);
+
+					var f='';
+					f+='<h2 style="color: #F36E21">'+'Forms'+'</h2>';
+					f+='<h3>'+'Undergraduate Forms'+'</h3><ul><li><a href="assets/pdf/Independent_study_12_6_2013.docx">'+json.forms.undergraduateForms.formName+'</a></li></ul>';
+					f+='<h3>'+'Graduate Forms'+'</h3>';
+					$.each(json.forms.graduateForms, function (i, item) {
+						f+='<ul><li><a href="item.href">'+item.formName+'</a></li></ul>';
+					});
+					$('#forms-popup').html(f);
+
+					var c='';
+					c+='<h2 style="color: #F36E21">'+json.coopEnrollment.title+'</h2>';
+					$.each(json.coopEnrollment.enrollmentInformationContent, function (i, item) {
+						c+='<h3>'+item.title+'</h3><p>'+item.description+'</p>';
+					});
+					$('#enrollment-popup').html(c);
+
+				});
+
+				//Employment-Academic excellence...
+				myXHR('get',{'path':'/employment/'}).done(function(json){
+					var x='';
+					x+='<div><h2 style="color: white;text-align: center">'+json.introduction.title+'</h2><h4 style="color: #F36E21;text-align: center"><u>'+json.introduction.content[0].title+'</u></h4>'+
+									'<p style="color: white;padding: 30px">'+json.introduction.content[0].description+'</p></div>';
+					x+='<div class="container"><div style="width: 200px;height: 200px;background-color: #D64541;margin: 3px;color: white;border-radius: 30px;text-align: center" class="hvr-grow icon fa fa-usd fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px;text-align: center">'+json.degreeStatistics.statistics[0].value+'</h2><p style="font-size: small">'+json.degreeStatistics.statistics[0].description+'</p></div>';
+					x+='<div style="width: 200px;height: 200px;background-color: #2C3E50;margin: 3px;color: white;border-radius: 30px;text-align: center" class="hvr-grow icon fa fa-bar-chart-o fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px;text-align: center">'+json.degreeStatistics.statistics[1].value+'</h2><p style="font-size: small">'+json.degreeStatistics.statistics[1].description+'</p></div>';
+					x+='<div style="width: 200px;height: 200px;background-color: #68C3A3;margin: 3px;color: white;border-radius: 30px;text-align: center" class="hvr-grow icon fa fa-pie-chart fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px;text-align: center">'+json.degreeStatistics.statistics[2].value+'</h2><p style="font-size: small">'+json.degreeStatistics.statistics[2].description+'</p></div>';
+					x+='<div style="width: 200px;height: 200px;background-color: #F4B350;margin: 3px;color: white;border-radius: 30px;text-align: center" class="hvr-grow icon fa fa-line-chart fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px;text-align: center">'+json.degreeStatistics.statistics[3].value+'</h2><p style="font-size: small">'+json.degreeStatistics.statistics[3].description+'</p></div></div>';
+					x+='<div><h4 style="color: #F36E21;text-align: center;padding-top: 20px"><u>'+json.introduction.content[1].title+'</u></h4>'+
+							'<p style="color: white;padding: 30px">'+json.introduction.content[1].description+'</p></div>';
+					x+='<div><h4 style="color: #F36E21;text-align: center"><u>'+json.employers.title+'</u></h4>';
+
+					$.each(json.employers.employerNames,function(i,item){
+						x+='<p style="color: white;padding-left: 50px;display: inline">'+item+'</p>';
+					});
+					x+='<h4 style="color: #F36E21;text-align: center;padding-top: 15px"><u>'+json.careers.title+'</u></h4>';
+					$.each(json.careers.careerNames,function(i,item){
+						x+='<p style="color: white;padding-left: 30px;display: inline">'+item+'</p></div>';
+					});
+					$('#academic').html(x);
+				});
+
+
+
+				//Maps and tables
+				$('#maps').append("<h2 style='padding-top: 25px;font-size: 30px'>Where Our Students Work</h2><p>Click a marker to learn more about the jobs at that location</p>" +
+						"<iframe src='http://ist.rit.edu/api/map/' style='width:1200px;height:450px;margin: auto;padding-left: 75px'></iframe>").append('<div href="#coTable-popup" style="width: 200px;height: 200px;' +
+						'background-color: #3498DB;margin: 3px;color: white;border-radius: 30px" class="coTable-popup-link hvr-bounce-in icon fa fa-table fa-2x "><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">'+'Co-op Table'+'</h2></div>').append('<div href="#prTable-popup" style="width: 200px;height: 200px;' +
+						'background-color: #F64747;margin: 3px;color: white;border-radius: 30px" class="prTable-popup-link hvr-bounce-in icon fa fa-briefcase fa-2x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">'+'Professional Employment Table'+'</h2></div>');
+
+				//co-op table
+				myXHR('get', {'path': '/employment/coopTable'}).done(function (json) {
+					console.log(json.coopTable.coopInformation.length);
+					var x = '';
+					x+='<table><thead><tr><th>'+'Employer'+'</th><th>'+'Degree'+'</th><th>'+'City'+'</th><th>'+'Term'+'</th></tr></thead>';
+
+					$.each(json.coopTable.coopInformation, function (i,item) {
+						x+='<tbody><tr><td>'+item.employer+'</td>';
+						x+='<td>'+item.degree+'</td>';
+						x+='<td>'+item.city+'</td>';
+						x+='<td>'+item.term+'</td></tr></tbody></table>';
+					});
+					$('#coTable-popup').html(x);
+				});
+
+				//employment table
+				myXHR('get', {'path': '/employment/employmentTable'}).done(function (json) {
+					//creating a table and putting data in it
+					var x = '';
+					x='<table><thead><tr><th>'+'Degree'+'</th><th>'+'Employer'+'</th><th>'+'Location'+'</th><th>'+'Title'+'</th><th>'+'Start Date'+'</th></tr></thead>';
+					$.each(json.employmentTable.professionalEmploymentInformation, function (i,item) {
+						x +='<tbody><tr><td>'+item.degree+'</td><td>'+item.employer+'</td><td>'+item.city+'</td><td>'+item.title+'</td><td>'+item.startDate+'</tr></tbody></table>';
+
+					});
+					$('#prTable-popup').html(x);
+				});
+
+				//Areas of research
+				myXHR('get',{'path':'/research/byInterestArea/'}).done(function(json){
+					var a='<h2 style="color: #F36E21;padding: 0px">Research by Domain Area: '+json.byInterestArea[4].areaName+'</h2>';
+					$.each(json.byInterestArea[4].citations, function(i,item){
+
+						a+='<ul style="padding: 0px"><li style="padding: 0px">'+item+'</li></ul>';
+					});
+					$('#analytics-popup').html(a);
+
+					var d='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[3].areaName+'</h2>';
+					$.each(json.byInterestArea[3].citations, function(i,item){
+
+						d+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#database-popup').html(d);
+
+					var e='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[1].areaName+'</h2>';
+					$.each(json.byInterestArea[1].citations, function(i,item){
+
+						e+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#education-popup').html(e);
+
+					var g='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[2].areaName+'</h2>';
+					$.each(json.byInterestArea[2].citations, function(i,item){
+
+						g+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#geo-popup').html(g);
+
+					var h='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[0].areaName+'</h2>';
+					$.each(json.byInterestArea[0].citations, function(i,item){
+
+						h+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#hci-popup').html(h);
+
+					var he='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[8].areaName+'</h2>';
+					$.each(json.byInterestArea[8].citations, function(i,item){
+
+						he+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#health-popup').html(he);
+
+					var m='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[7].areaName+'</h2>';
+					$.each(json.byInterestArea[7].citations, function(i,item){
+
+						m+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#mobile-popup').html(m);
+
+					var n='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[6].areaName+'</h2>';
+					$.each(json.byInterestArea[6].citations, function(i,item){
+
+						n+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#networking-popup').html(n);
+
+					var p='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[9].areaName+'</h2>';
+					$.each(json.byInterestArea[9].citations, function(i,item){
+
+						p+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#programming-popup').html(p);
+
+					var s='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[10].areaName+'</h2>';
+					$.each(json.byInterestArea[10].citations, function(i,item){
+
+						s+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#system-popup').html(s);
+
+					var u='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[11].areaName+'</h2>';
+					$.each(json.byInterestArea[11].citations, function(i,item){
+
+						u+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#ubiquitous-popup').html(u);
+
+					var w='<h2 style="color: #F36E21">Research by Domain Area: '+json.byInterestArea[5].areaName+'</h2>';
+					$.each(json.byInterestArea[5].citations, function(i,item){
+
+						w+='<ul><li>'+item+'</li></ul>';
+					});
+					$('#web-popup').html(w);
+
+				});
+
+				//footer
+				myXHR('get',{'path':'/footer/'}).done(function(json){
+					var x='';
+					x+='<h2 style="color: #FF512F">'+json.social.title+'</h2>';
+					x+='<p style="color: white">'+json.social.tweet+'</p>';
+					$.each(json.quickLinks,function(i,item){
+						//console.log(item.description);
+						x+='<div><h3 style="color: whitesmoke"><a href=item.href>'+item.title+'</a></br></h3>';
+					});
+					x+='<div><h3 style="color: whitesmoke"><a href="#news-popup" class="news-popup-link">'+'News Archives'+'</a></h3><h3 style="color: whitesmoke"><a href="http://ist.rit.edu/api/contactForm/"> '+'Contact US'+'</div></div>'+
+									'<p style="color: honeydew">'+json.copyright.html+'</p><p style="color: lightyellow">'+'One Lomb Memorial Drive, Rochester, NY 14623-5603 '+
+					'Questions or comments? Send us feedback. Telephone: 585-475-2700'+'</p><h3 style="color: white"><a style="padding-right: 30px;color: #44D3FD" href="json.social.twitter" class="icon fa-twitter fa-3x"></a><a style="color: #3b5998" href="json.social.facebook" class="icon fa-facebook fa-3x"></a></h3>';
+					$('#ffooter').html(x);
+
+				});
+
+				//news archive
+				myXHR('get',{'path':'/news/'}).done(function(json){
+					var x='';
+					$.each(json.year,function(i,item){
+						x+='<h3>'+item.title+'</h3><p>'+item.description+'</p><h4>'+item.date+'</h4>';
+					});
+					$('#news-popup').html(x);
+
+				});
+				
+
+				//pagenav.js
+				$('.page-navigation').onePageNav({
+
+					currentClass: 'current',
+					changeHash: false,
+					scrollSpeed: 1000,
+					scrollThreshold: 0.5,
+					filter: '',
+					easing: 'swing'
+				});
+
+
+				// calling magnific popup function for lightbox on specified clicks on the page
+
+				$('.news-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.webu-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.humanu-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.computingu-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.infog-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.humang-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.networkg-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.data-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mgeo-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mhealth-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mmobile-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mdevelopment-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mnetwork-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mwebdesign-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mwebdev-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				//
+				$('#accordion').accordion();
+
+				$('.abroad-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.services-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.tutor-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.ambassador-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.forms-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.enrollment-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.coTable-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.prTable-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.analytics-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.database-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.education-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.geo-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.hci-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.health-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.mobile-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.networking-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.programming-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.system-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.ubiquitous-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+
+				$('.web-popup-link').magnificPopup({
+					type:'inline',
+					midClick: true
+				});
+			});
+
+			//on-click function for faculty research areas
+			function facMore(w) {
+				//get the data- info
+				var id = $(w).attr('data-id');
+				var x = '';
+				myXHR('get', {'path': '/research/byFaculty/username=' + id}).done(function (json) {
+					console.log(json.facultyName);
+					if (json.facultyName =='undefined') {
+						x += '<h2 style="color: #F36E21;">' +'Faculty is not into Research'+ '</h2>';
+					}else{
+
+						x += '<h2 style="color: #F36E21;">' + json.facultyName + '</h2>';
+						$.each(json.citations, function (i, item) {
+							x += '<p class="fa fa-hand-o-right">' + ' ' + item + '</p>';
+						});
+					}
+					$('#faculty-popup').html(x);
+				});
+				$('.faculty-popup-link').magnificPopup({
+					type: 'inline',
+					midClick: true
+				});
+			}
+
+			function myXHR(t,d,id){
+				return $.ajax({
+					type:t,
+					cache:false,
+					async:true,
+					dataType:'json',
+					url:'proxy.php',
+					data:d,
+					beforeSend:function(){
+						//happen before send...
+						$(id).append('<img src="load.gif" class="gears"/> ');
+					}
+				}).always(function(){
+					//happen no matter what
+					$(id).find('.gears').fadeOut(3000,function(){
+						$(this).remove();
+					});
+				}).fail(function(){
+					//handle failure...
+				});
+			}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#accordion').accordion({
+					heightStyle: "content"
+				});
+			});
+		</script>
+
+	</head>
+	<body class="landing" style="padding: 40px">
+
+		<div id="top"></div>
+		    <!-- About -->
+			<header id="header" class="alt">
+				<h1><img src="images/rit_logo.png"></h1>
+
+					<nav id="nav" class="site-navigation page-navigation">
+						<ul class="menu">
+							<li><a href="#top">About</a></li>
+							<li><a href="#section-one">Our Degrees</a></li>
+							<li><a href="#section-two">Employment</a></li>
+							<li><a href="#section-three">People & Research</a></li>
+							<li><a href="#section-four">Resources</a></li>
+						</ul>
+					</nav>
+
+			</header>
+		    <!-- Banner -->
+			<section id="banner">
+
+			</section>
+
+
+			   <!-- Undergard Degrees -->
+				<section id="section-one" class="wrapper style1">
+					<div class="container 75%">
+						<div class="row 200%">
+							<div class="6u 12u$(medium)">
+								<header class="major">
+									<h2>Our Undergraduate Degrees</h2>
+								</header>
+							</div>
+							<div class="6u$ 12u$(medium)" >
+								<div id="UnderGrad">
+									<div id="uweb">
+									<h4 href="#webu-popup" class="webu-popup-link fa fa-globe fa-2x hvr-grow" style="color: #FE2A70;cursor: pointer">Web & Mobile Computing, B.S.</h4>
+									</div>
+								</div>
+								<div id="uhuman">
+									<h4 href="#humanu-popup" class="humanu-popup-link fa fa-thumbs-o-up fa-2x hvr-grow" style="color: #F8B64D;cursor: pointer">Human Centered Computing, B.S.</h4>
+								</div>
+								<div id="ucomputing">
+									<h4 href="#computingu-popup" class="computingu-popup-link fa fa-laptop fa-2x hvr-grow" style="color: #00A2FF;cursor: pointer">Computing & Information Technologies, B.S.</h4>
+								</div>
+								<div id="webu-popup" class="white-popup mfp-hide"></div>
+								<div id="humanu-popup" class="white-popup mfp-hide"></div>
+								<div id="computingu-popup" class="white-popup mfp-hide"></div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!--Graduate degrees-->
+				<section id="one" class="wrapper style2">
+					<div class="container 75%">
+						<div class="row 200%">
+							<div class="6u 12u$(medium)">
+								<header class="major">
+									<h2>Our Graduate Degrees</h2>
+								</header>
+							</div>
+							<div class="6u$ 12u$(medium)">
+								<div id="Grad">
+									<div id="ginfo">
+										<h4 href="#infog-popup" class='infog-popup-link hvr-grow fa fa-keyboard-o fa-2x' style='color: #FE2A70;cursor: pointer'>Information Sciences & Technologies, M.S.</h4>
+									</div>
+									<div id="ghuman">
+										<h4 href="#humang-popup" class='humang-popup-link hvr-grow fa fa-hand-o-up fa-2x' style='color: #F8B64D;cursor: pointer'>Human Computer Interaction, M.S.</h4>
+									</div>
+									<div id="gnetwork">
+										<h4 href="#networkg-popup" class='networkg-popup-link hvr-grow fa fa-server fa-2x' style='color: #00A2FF;cursor: pointer'>Networking & Systems Administration, M.S.</h4>
+									</div>
+									<div id="infog-popup" class="white-popup mfp-hide"></div>
+									<div id="humang-popup" class="white-popup mfp-hide"></div>
+									<div id="networkg-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+			    <!-- Ug minors -->
+				<section id="two" class="wrapper style1 special">
+					<div class="container">
+						<header class="major">
+							<h2>Our UgMinors</h2>
+							<p style="font-size: 15px">Hover & click on text to get more info</p>
+						</header>
+						<div class="row 250%">
+							<div class="3u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img  href="#data-popup" class="data-popup-link" src="images/Database.jpg" alt=""/>
+												<figcaption>
+													<h2 href="#data-popup" class="data-popup-link">DBDDI-MN</h2>
+													<p href="#data-popup" class="data-popup-link">Database Design, Development and Implementation.</p>
+													<div id="data-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="3u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img href="#mgeo-popup" class="mgeo-popup-link" src="images/Geographic.jpg" alt=""/>
+												<figcaption>
+													<h2  href="#mgeo-popup" class="mgeo-popup-link">GIS-MN</h2>
+													<p  href="#mgeo-popup" class="mgeo-popup-link">Geographic Information Systems Minor.</p>
+													<div id="mgeo-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="3u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img src="images/health.jpg" alt=""/>
+												<figcaption>
+													<h2  href="#mhealth-popup" class="mhealth-popup-link">MEDINFO-MN</h2>
+													<p  href="#mhealth-popup" class="mhealth-popup-link">Health IT.</p>
+													<div id="mhealth-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="3u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img src="images/mobile.jpg" alt=""/>
+												<figcaption>
+													<h2  href="#mmobile-popup" class="mmobile-popup-link">MDDEV-MN</h2>
+													<p  href="#mmobile-popup" class="mmobile-popup-link">Mobile Design and Development.</p>
+													<div id="mmobile-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="3u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img src="images/mdevelopment.jpg" alt=""/>
+												<figcaption>
+													<h2  href="#mdevelopment-popup" class="mdevelopment-popup-link">MDEV-MN</h2>
+													<p  href="#mdevelopment-popup" class="mdevelopment-popup-link">Mobile Development.</p>
+													<div id="mdevelopment-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div><div class="3u 10u$(xsmall)">
+							<div class="image fit captioned">
+								<ul class="demo-3">
+									<li>
+										<figure>
+											<img src="images/network.jpg" alt=""/>
+											<figcaption>
+												<h2 href="#mnetwork-popup" class="mnetwork-popup-link">NETSYS-MN</h2>
+												<p href="#mnetwork-popup" class="mnetwork-popup-link">Networking and System Administration.</p>
+												<div id="mnetwork-popup" class="white-popup mfp-hide"></div>
+											</figcaption>
+										</figure>
+									</li>
+								</ul>
+							</div>
+						</div><div class="3u 10u$(xsmall)">
+							<div class="image fit captioned">
+								<ul class="demo-3">
+									<li>
+										<figure>
+											<img src="images/webdesign.jpg" alt=""/>
+											<figcaption>
+												<h2 href="#mwebdesign-popup" class="mwebdesign-popup-link">WEBDD-MN</h2>
+												<p href="#mwebdesign-popup" class="mwebdesign-popup-link">Web Design and Development.</p>
+												<div id="mwebdesign-popup" class="white-popup mfp-hide"></div>
+											</figcaption>
+										</figure>
+									</li>
+								</ul>
+							</div>
+						</div>
+							<div class="3u$ 10u$(xsmall)">
+								<div class="image fit captioned">
+									<ul class="demo-3">
+										<li>
+											<figure>
+												<img src="images/webdevelopment.jpg" alt=""/>
+												<figcaption>
+													<h2 href="#mwebdev-popup" class="mwebdev-popup-link">WEBD-MN</h2>
+													<p href="#mwebdev-popup" class="mwebdev-popup-link">Web Development.</p>
+													<div id="mwebdev-popup" class="white-popup mfp-hide"></div>
+												</figcaption>
+											</figure>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!--academic excellence-->
+				<section id="academic" class="wrapper style3"></section>
+
+		       <!--maps-->
+				<div id="section-two">
+					<section id="maps" class="style2 special" style="background-color: #f9f9f9">
+
+					</section>
+				</div>
+				<div id="coTable-popup" class="table-wrapper white-popup mfp-hide "></div>
+				<div id="prTable-popup" class="table-wrapper white-popup mfp-hide "></div>
+
+			    <!-- Faculty and Research -->
+				<div id="section-three">
+					<section id="three" class="wrapper style2">
+						<div class="container">
+							<header class="major special">
+								<h2>Faculty and their Research</h2>
+								<p>To view more about the faculty research.Click them</p>
+							</header>
+							<div class="feature-grid fd1"></div>
+							<header class="major special">
+								<h2><u>Our Staff</u></h2>
+							</header>
+							<div class="feature-grid fd2"></div>
+							<div id="faculty-popup" class="white-popup mfp-hide">
+
+							</div>
+						</div>
+					</section>
+				</div>
+
+			    <!-- Areas of Research -->
+				<section id="four" class="wrapper style1 special" style="background-color: #F9F9F9">
+					<div class="container">
+						<header class="major">
+							<h2>Faculty Research: Areas of Interest</h2>
+							<p>Click the area you’re interested in to explore our faculty publications</p>
+						</header>
+						<div href="#analytics-popup"  style="width: 200px;height: 200px;background-color: #D64541;margin: 3px;color: white;border-radius: 30px" class="analytics-popup-link hvr-grow icon fa fa-bar-chart-o fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Analytics</h2></div>
+						<div href="#database-popup"  style="width: 200px;height: 200px;background-color: #6C7A86;margin: 3px;color: white;border-radius: 30px" class="database-popup-link hvr-grow icon fa fa-database fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Database</h2></div>
+						<div href="#education-popup"  style="width: 200px;height: 200px;background-color: #F2784B;margin: 3px;color: white;border-radius: 30px" class="education-popup-link hvr-grow icon fa fa-pencil-square-o fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Education</h2></div>
+						<div href="#geo-popup"  style="width: 200px;height: 200px;background-color: #68C3A3;margin: 3px;color: white;border-radius: 30px" class="geo-popup-link hvr-grow icon fa fa-map-marker fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Geo</h2></div>
+						<div href="#hci-popup"  style="width: 200px;height: 200px;background-color: #3A539B;margin: 3px;color: white;border-radius: 30px" class="hci-popup-link hvr-grow icon fa fa-user fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">HCI</h2></div>
+						<div href="#health-popup"  style="width: 200px;height: 200px;background-color: #34495E;margin: 3px;color: white;border-radius: 30px" class="health-popup-link hvr-grow icon fa fa-heartbeat fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Health Informatics</h2></div>
+						<div href="#mobile-popup"  style="width: 200px;height: 200px;background-color: #019875;margin: 3px;color: white;border-radius: 30px" class="mobile-popup-link hvr-grow icon fa fa-mobile-phone fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Mobile</h2></div>
+						<div href="#networking-popup"  style="width: 200px;height: 200px;background-color: #F4B350;margin: 3px;color: white;border-radius: 30px" class="networking-popup-link hvr-grow icon fa fa-sitemap fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Networking</h2></div>
+						<div href="#programming-popup"  style="width: 200px;height: 200px;background-color: #F64747;margin: 3px;color: white;border-radius: 30px" class="programming-popup-link hvr-grow icon fa fa-file-code-o fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 10px">Programming</h2></div>
+						<div href="#system-popup"  style="width: 200px;height: 200px;background-color: #22313F;margin: 3px;color: white;border-radius: 30px" class="system-popup-link hvr-grow icon fa fa-server fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">System Administration</h2></div>
+						<div href="#ubiquitous-popup"  style="width: 200px;height: 200px;background-color: #E08283;margin: 3px;color: white;border-radius: 30px" class="ubiquitous-popup-link hvr-grow icon fa fa-caret-square-o-right fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Ubiquitous Computing</h2></div>
+						<div href="#web-popup" style="width: 200px;height: 200px;background-color: #3498DB;margin: 3px;color: white;border-radius: 30px" class="web-popup-link hvr-grow icon fa fa-desktop fa-3x"><h2 style="font-size: 23px;position:relative;top: 23px;color: white;padding: 3px">Web</h2></div>
+
+					</div>
+
+						<div id="analytics-popup" class=" white-popup mfp-hide "></div>
+						<div id="database-popup" class=" white-popup mfp-hide "></div>
+						<div id="education-popup" class=" white-popup mfp-hide "></div>
+						<div id="geo-popup" class=" white-popup mfp-hide "></div>
+						<div id="hci-popup" class=" white-popup mfp-hide "></div>
+						<div id="health-popup" class=" white-popup mfp-hide "></div>
+						<div id="mobile-popup" class=" white-popup mfp-hide "></div>
+						<div id="networking-popup" class=" white-popup mfp-hide "></div>
+						<div id="programming-popup" class=" white-popup mfp-hide "></div>
+						<div id="system-popup" class=" white-popup mfp-hide "></div>
+						<div id="ubiquitous-popup" class=" white-popup mfp-hide "></div>
+						<div id="web-popup" class=" white-popup mfp-hide "></div>
+				</section>
+
+		    <!--Resources-->
+			<div id="section-four">
+				<section id="Res" class="wrapper style1 special">
+					<div class="container">
+						<header class="major">
+							<h2>Student Resources</h2>
+							<p>Click on any of the links for a quick access to our resources.</p>
+						</header>
+						<div class="row 150%">
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#abroad-popup" class="hvr-grow abroad-popup-link" src="images/study_abroad.jpg" alt="Study Abroad" />
+									<h4 href="#abroad-popup" class="abroad-popup-link">Study Abroad</h4>
+
+									<div id="abroad-popup" class="white-popup mfp-hide"></div>
+									<!--<div id="faculty-popup" class="white-popup mfp-hide"></div>-->
+								</div>
+							</div>
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#services-popup" class="hvr-grow services-popup-link" src="images/studentServices.jpg" alt="Student Services" />
+									<h4 href="#services-popup" class="services-popup-link">Student Services</h4>
+
+									<div id="services-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#tutor-popup" class="hvr-grow tutor-popup-link" src="images/tut_lab.jpg" alt="Tutor/Lab Information" />
+									<h4 href="#tutor-popup" class="tutor-popup-link">Tutor/Lab Information</h4>
+
+									<div id="tutor-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#ambassador-popup" class="hvr-grow ambassador-popup-link" src="images/stu_amb.jpg" alt="Student Ambassadors" />
+									<h4 href="#ambassador-popup" class="ambassador-popup-link">Student Ambassadors</h4>
+
+									<div id="ambassador-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#forms-popup" class="hvr-grow forms-popup-link" src="images/forms.jpg" alt="Forms" />
+									<h4 href="#forms-popup" class="forms-popup-link">Forms</h4>
+
+									<div id="forms-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+							<div class="4u 10u$(xsmall)">
+								<div class="image fit captioned">
+									<img href="#enrollment-popup" class="hvr-grow enrollment-popup-link" src="images/co-op.jpg" alt="Coop Enrollment" />
+									<h4 href="#enrollment-popup" class="enrollment-popup-link">Co-op Enrollment</h4>
+
+									<div id="enrollment-popup" class="white-popup mfp-hide"></div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</section>
+			</div>
+
+		<!-- Footer -->
+		<section class="wrapper style3 special">
+			<div id="ffooter"></div>
+		</section>
+	<div id="news-popup" class="white-popup mfp-hide"></div>
+	</body>
+</html>
